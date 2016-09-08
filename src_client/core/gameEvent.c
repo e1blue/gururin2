@@ -1,5 +1,6 @@
 #include "library.h"
 #include "plugin/pluginData.h"
+#include "plugin/pluginGururin.h"
 #include "engine/engineMath/engineMath.h"
 #include "engine/engineGraphic/engineGraphic.h"
 #include "game.h"
@@ -107,14 +108,14 @@ void gameMainEventKeyZxcv(bool kzb, bool kxb, bool kcb, bool kvb){
 
 // 戻るボタンの制御を行うか
 bool gameMainEventKeyIsBack(void){
-	return true;
+	return !platformReplayExist();
 }
 
 // ----------------------------------------------------------------
 
 // 傾きを使うかどうか
 bool gameMainEventIsAcceleration(void){
-	return false;
+	return true;
 }
 
 // 傾きの状態を報告する

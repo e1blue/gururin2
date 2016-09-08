@@ -1,0 +1,38 @@
+{{define "content"}}
+	{{template "headTitle500" .}}
+	{{template "gameFrame" .}}
+
+	<div class="caption"><span id="i18n_spanId_replay_caption"></span></div>
+
+	<table style="margin:10px auto;">
+		<tr><td style="text-align:right;">time</td><td style="text-align:left;">{{.ReplayData.GravityLength}}frame</td></tr>
+		<tr><td style="text-align:right;">score</td><td style="text-align:left;">{{.ReplayData.Score}}point</td></tr>
+	</table>
+
+	{{template "downloadApp" .}}
+	{{template "downloadWeb" .}}
+	{{template "backLink" .}}
+	{{template "footer" .}}
+	<script type="text/javascript">
+(function(global){
+	"use strict";
+
+	// ----------------------------------------------------------------
+	// ----------------------------------------------------------------
+	// ----------------------------------------------------------------
+
+	document.getElementById("gameFrame").contentWindow.replayParams = {
+		"stageId": {{.ReplayData.StageId}},
+		"puppetId": {{.ReplayData.PuppetId}},
+		"seed": {{.ReplayData.Seed}},
+		"gravityList": {{.GravityList}},
+		"gravityLength": {{.ReplayData.GravityLength}},
+	};
+
+	// ----------------------------------------------------------------
+	// ----------------------------------------------------------------
+	// ----------------------------------------------------------------
+})(this);
+	</script>
+{{end}}
+

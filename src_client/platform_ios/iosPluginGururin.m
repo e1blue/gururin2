@@ -1,0 +1,36 @@
+#import "fuhaha-Swift.h"
+#include "library.h"
+#include "native.h"
+#include "pluginGururin.h"
+
+// ----------------------------------------------------------------
+// ----------------------------------------------------------------
+// ----------------------------------------------------------------
+
+// web用体験版ロック スマートフォンでは何もしない
+int platformLockedSelectIndex(){return 0;}
+
+// web用編集ステージ情報取得 スマートフォンでは何もしない
+int platformEditedExist(){return 0;}
+char *platformEditedGet(){return nil;}
+
+// web用リプレイモード情報取得 スマートフォンでは何もしない
+int platformReplayExist(){return 0;}
+int platformReplayGetStageId(void){return 0;}
+int platformReplayGetPuppetId(void){return 0;}
+char *platformReplayGetGravity(unsigned long *seed, int *length){return nil;}
+
+// ----------------------------------------------------------------
+// ----------------------------------------------------------------
+// ----------------------------------------------------------------
+
+// twitter投稿
+void platformTwitter(char *post){
+	NSString *nsstr = [NSString stringWithCString: post encoding: NSUTF8StringEncoding];
+	[IosPluginGururin platformTwitter: nsstr];
+}
+
+// ----------------------------------------------------------------
+// ----------------------------------------------------------------
+// ----------------------------------------------------------------
+

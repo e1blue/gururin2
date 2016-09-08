@@ -1,20 +1,10 @@
-フハハエンジン
+グルリンダッシュ
 ======================
 
-## フハハエンジンってなんじゃらぽん
+## グルリンダッシュ
 
-シンプルかつ軽量なマルチプラットフォームゲームエンジン。
-androidとiosとブラウザで遊べるゲームが作れます。
-ゲームのコアな部分はc言語で記述します。
-個人制作用に最低限の機能しか実装していません。
-あなたのゲームエンジンとして使うにはパワー不足だと思いますが、
-ソースコードの参考に役立てていただけたら嬉しいです。
-
-## 使用例
-
-[ホッピンパペット](http://totetero.com/project/hoppingpuppet/index.html) ([ソースコード:git](https://github.com/totetero/hopping_puppet))
-
-[グルリンダッシュ](http://gururin-dash.appspot.com) ([ソースコード:git](https://github.com/totetero/gururin2))
+前作[グルリン](http://totetero.com/project/gururin/frame.html)がアイデアだけの一発ネタだったのに対して、
+次元を落としてゲーム性を大幅パワーアップ！
 
 ## ファイル構造
 
@@ -28,12 +18,17 @@ androidとiosとブラウザで遊べるゲームが作れます。
 | src_client/core/plugin     | 各プラットフォームと連携するためのソースコード |
 | src_client/platform_*      | 各プラットフォーム固有のソースコード |
 | src_platform               | 各プラットフォーム固有のソースコード 上記との違いは、プラットフォームのバージョンアップなどにより変化してしまう可能性が高いソースコード |
+| src_data                   | 画像などのリソースを作成するデータ |
 | src_server                 | web版動作確認用 |
 
 
 ## ビルド準備
 
-本エンジンはmac上での開発を想定しております。
+本ゲームはmac上での開発を想定しております。
+
+### リソースビルド
+
+* imageMagickのインストール
 
 ### android版の開発
 
@@ -42,15 +37,24 @@ androidとiosとブラウザで遊べるゲームが作れます。
 ### ios版の開発
 
 * XCodeのインストール
+* CocoaPodsのインストール
 
 ### web版の開発
 
 * emscriptenのインストール
 * node.jsのインストール
+* (GoogleAppEngineのインストール)
 
 ## リソース管理
 
-`${FUHAHAROOT}/contents`に画像などのリソースを入れます。
+下記のmakeコマンドを実行します。
+
+```bash
+cd ${FUHAHAROOT}
+make img
+```
+
+`${FUHAHAROOT}/contents`に画像などのリソースが作成されます。
 
 下記のmakeコマンドを実行します。
 
@@ -76,6 +80,15 @@ make android-debug
 adbなどを用いてandroid実機にインストールして確認してください。
 
 ### ios版のビルド
+
+最初の場合は下記のコマンドを実行します
+
+```bash
+cd ${FUHAHAROOT}/src_platform/ios
+pod install
+```
+
+うまくいけば必要なライブラリがインストールされます。
 
 XCodeで`${FUHAHAROOT}/src_platform/ios/fuhaha.xcodeproj`を開きます。
 XCodeの作法に従いビルドします。

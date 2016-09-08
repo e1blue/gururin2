@@ -15,8 +15,20 @@ src_platform/web/bin
 src_platform/android/.gradle
 src_platform/android/build
 src_platform/android/assets
+src_platform/android/*.keystore
 
 src_platform/ios/assets
+
+contents/img/*/*.png
+contents/img/system.png
+
+src_client/secret/stringSecret.c
+
+src_data/bin/*.out
+src_data/image/header/*.h
+src_data/ios/dst
+
+src_server/go/statics/play
 
 # ----------------------------------------------------------------
 # ----------------------------------------------------------------

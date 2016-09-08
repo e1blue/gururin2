@@ -1,0 +1,22 @@
+{{define "content"}}
+	{{template "headTitle800" .}}
+	<div class="caption"><h2>Replay List</h2></div>
+
+	<table style="margin:10px auto 0;">
+		<tr>
+			<td>Date</td>
+			<td>UserId</td>
+			<td>Link</td>
+		</tr>
+		{{range $data := .ReplayDatas}}
+			<tr>
+				<td>{{localTime $data.Data.Date}}</td>
+				<td>{{$data.Data.UserId}}</td>
+				<td><input type="button" value="replay" onclick="location.href='replay/{{$data.Id}}';"></input></td>
+			</tr>
+		{{end}}
+	</table>
+
+	{{template "footer" .}}
+{{end}}
+

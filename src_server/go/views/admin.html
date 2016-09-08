@@ -1,0 +1,194 @@
+{{define "content"}}
+	{{template "headTitle800" .}}
+	<div class="caption"><h1>グルリンダッシュ開発者用ツール</h1></div>
+
+	<div style="text-align:center;">
+		<h2>リンク</h2>
+		<div style="width:200px;margin:10px auto;background-color:white;border:solid 2px black;">
+			<div><a href="/play">プレイ</a></div>
+			<div><a href="/replay_list">リプレイリスト</a></div>
+			<div><a href="/editor">ステージエディタ</a></div>
+		</div>
+	</div>
+
+	<hr>
+
+	<div style="text-align:center;">
+		<h2>ローカルデータ編集</h2>
+		<div><input type="button" value="ローカルデータクリア" onclick="localStorage.clear();"></input></div>
+		<div style="width:600px;margin:10px auto;border:solid 2px black;">
+			<div style="margin:10px;">
+				<input type="button" value="全選択" onclick="selectAll();"></input>
+				<input type="button" value="下記情報の解放" onclick="openData();"></input>
+			</div>
+			<table>
+				<tr><td>ステージ解放</td><td>
+					<div>
+						<!-- 01 --><span style="background-color:transparent;"><input type="checkbox" id="stage01">黄1</input></span>
+						<!-- 02 --><span style="background-color:transparent;"><input type="checkbox" id="stage02">黄2</input></span>
+						<!-- 03 --><span style="background-color:transparent;"><input type="checkbox" id="stage03">黄3</input></span>
+					</div><div>
+						<!-- 04 --><span style="background-color:transparent;"><input type="checkbox" id="stage04">青1</input></span>
+						<!-- 05 --><span style="background-color:transparent;"><input type="checkbox" id="stage05">青2</input></span>
+						<!-- 06 --><span style="background-color:transparent;"><input type="checkbox" id="stage06">青3</input></span>
+						<!-- 07 --><span style="background-color:transparent;"><input type="checkbox" id="stage07">青4</input></span>
+						<!-- 08 --><span style="background-color:transparent;"><input type="checkbox" id="stage08">青5</input></span>
+						<!-- 09 --><span style="background-color:transparent;"><input type="checkbox" id="stage09">青6</input></span>
+					</div><div>
+						<!-- 10 --><span style="background-color:transparent;"><input type="checkbox" id="stage10">緑1</input></span>
+						<!-- 11 --><span style="background-color:transparent;"><input type="checkbox" id="stage11">緑2</input></span>
+						<!-- 12 --><span style="background-color:transparent;"><input type="checkbox" id="stage12">緑3</input></span>
+						<!-- 13 --><span style="background-color:transparent;"><input type="checkbox" id="stage13">緑4</input></span>
+						<!-- 14 --><span style="background-color:transparent;"><input type="checkbox" id="stage14">緑5</input></span>
+						<!-- 15 --><span style="background-color:transparent;"><input type="checkbox" id="stage15">緑6</input></span>
+						<!-- 16 --><span style="background-color:transparent;"><input type="checkbox" id="stage16">緑7</input></span>
+						<!-- 17 --><span style="background-color:transparent;"><input type="checkbox" id="stage17">緑8</input></span>
+						<!-- 18 --><span style="background-color:transparent;"><input type="checkbox" id="stage18">緑9</input></span>
+					</div><div>
+						<!-- 19 --><span style="background-color:transparent;"><input type="checkbox" id="stage19">赤1</input></span>
+						<!-- 20 --><span style="background-color:transparent;"><input type="checkbox" id="stage20">赤2</input></span>
+						<!-- 21 --><span style="background-color:transparent;"><input type="checkbox" id="stage21">赤3</input></span>
+						<!-- 22 --><span style="background-color:transparent;"><input type="checkbox" id="stage22">赤4</input></span>
+						<!-- 23 --><span style="background-color:transparent;"><input type="checkbox" id="stage23">赤5</input></span>
+						<!-- 24 --><span style="background-color:transparent;"><input type="checkbox" id="stage24">赤6</input></span>
+						<!-- 25 --><span style="background-color:transparent;"><input type="checkbox" id="stage25">赤7</input></span>
+						<!-- 26 --><span style="background-color:transparent;"><input type="checkbox" id="stage26">赤8</input></span>
+						<!-- 27 --><span style="background-color:transparent;"><input type="checkbox" id="stage27">赤9</input></span>
+					</div>
+				</td></tr>
+				<tr><td>ストーリー解放</td><td>
+					<span style="background-color:transparent;"><input type="checkbox" id="story01">話1</input></span>
+					<span style="background-color:transparent;"><input type="checkbox" id="story02">話2</input></span>
+					<span style="background-color:transparent;"><input type="checkbox" id="story03">話3</input></span>
+					<span style="background-color:transparent;"><input type="checkbox" id="story04">話4</input></span>
+					<span style="background-color:transparent;"><input type="checkbox" id="story05">話5</input></span>
+				</td></tr>
+				<tr><td>パペット解放</td><td>
+					<div><span style="background-color:transparent;"><input type="checkbox" id="popguru">ぐるり</input></span></div>
+					<div><span style="background-color:transparent;"><input type="checkbox" id="popkuma">ミニクマ</input></span></div>
+					<div><span style="background-color:transparent;"><input type="checkbox" id="popribb">赤リボン</input></span></div>
+					<div><span style="background-color:transparent;"><input type="checkbox" id="poppebu">ペンギンバギー</input></span></div>
+					<div><span style="background-color:transparent;"><input type="checkbox" id="popmami">包帯少女</input></span></div>
+					<div><span style="background-color:transparent;"><input type="checkbox" id="pophand">天地反転</input></span></div>
+					<div><span style="background-color:transparent;"><input type="checkbox" id="popbear">タマゴクマ</input></span></div>
+					<div><span style="background-color:transparent;"><input type="checkbox" id="popguda">グダグダはにゃん</input></span></div>
+					<div><span style="background-color:transparent;"><input type="checkbox" id="poprobo">ポンコツロボット</input></span></div>
+				</td></tr>
+			</table>
+			<div style="margin:10px;">
+				<div>※ <span style="background-color:black;">black</span>色の要素は未完成</div>
+			</div>
+		</div>
+	</div>
+
+	{{template "footer" .}}
+	<script type="text/javascript" src="/js/base64.js"></script>
+	<script type="text/javascript">
+(function(global){
+	"use strict";
+
+	// ----------------------------------------------------------------
+	// ----------------------------------------------------------------
+	// ----------------------------------------------------------------
+
+	global.selectAll = function(){
+		document.getElementById("stage01").checked = true;
+		document.getElementById("stage02").checked = true;
+		document.getElementById("stage03").checked = true;
+		document.getElementById("stage04").checked = true;
+		document.getElementById("stage05").checked = true;
+		document.getElementById("stage06").checked = true;
+		document.getElementById("stage07").checked = true;
+		document.getElementById("stage08").checked = true;
+		document.getElementById("stage09").checked = true;
+		document.getElementById("stage10").checked = true;
+		document.getElementById("stage11").checked = true;
+		document.getElementById("stage12").checked = true;
+		document.getElementById("stage13").checked = true;
+		document.getElementById("stage14").checked = true;
+		document.getElementById("stage15").checked = true;
+		document.getElementById("stage16").checked = true;
+		document.getElementById("stage17").checked = true;
+		document.getElementById("stage18").checked = true;
+		document.getElementById("stage19").checked = true;
+		document.getElementById("stage20").checked = true;
+		document.getElementById("stage21").checked = true;
+		document.getElementById("stage22").checked = true;
+		document.getElementById("stage23").checked = true;
+		document.getElementById("stage24").checked = true;
+		document.getElementById("stage25").checked = true;
+		document.getElementById("stage26").checked = true;
+		document.getElementById("stage27").checked = true;
+		document.getElementById("story01").checked = true;
+		document.getElementById("story02").checked = true;
+		document.getElementById("story03").checked = true;
+		document.getElementById("story04").checked = true;
+		document.getElementById("story05").checked = true;
+		document.getElementById("popguru").checked = true;
+		document.getElementById("popkuma").checked = true;
+		document.getElementById("popribb").checked = true;
+		document.getElementById("poppebu").checked = true;
+		document.getElementById("popmami").checked = true;
+		document.getElementById("pophand").checked = true;
+		document.getElementById("popbear").checked = true;
+		document.getElementById("popguda").checked = true;
+		document.getElementById("poprobo").checked = true;
+	};
+
+	global.openData = function(){
+		var key = "storage_progress";
+		var input = localStorage.getItem(key);
+		if(input == null){input = "AAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";}
+		var array = utilBase64decode(input);
+		if(document.getElementById("stage01").checked){array[ 2 +  0] = 0x03;}
+		if(document.getElementById("stage02").checked){array[ 2 +  1] = 0x03;}
+		if(document.getElementById("stage03").checked){array[ 2 +  2] = 0x03;}
+		if(document.getElementById("stage04").checked){array[ 2 +  3] = 0x03;}
+		if(document.getElementById("stage05").checked){array[ 2 +  4] = 0x03;}
+		if(document.getElementById("stage06").checked){array[ 2 +  5] = 0x03;}
+		if(document.getElementById("stage07").checked){array[ 2 +  6] = 0x03;}
+		if(document.getElementById("stage08").checked){array[ 2 +  7] = 0x03;}
+		if(document.getElementById("stage09").checked){array[ 2 +  8] = 0x03;}
+		if(document.getElementById("stage10").checked){array[ 2 +  9] = 0x03;}
+		if(document.getElementById("stage11").checked){array[ 2 + 10] = 0x03;}
+		if(document.getElementById("stage12").checked){array[ 2 + 11] = 0x03;}
+		if(document.getElementById("stage13").checked){array[ 2 + 12] = 0x03;}
+		if(document.getElementById("stage14").checked){array[ 2 + 13] = 0x03;}
+		if(document.getElementById("stage15").checked){array[ 2 + 14] = 0x03;}
+		if(document.getElementById("stage16").checked){array[ 2 + 15] = 0x03;}
+		if(document.getElementById("stage17").checked){array[ 2 + 16] = 0x03;}
+		if(document.getElementById("stage18").checked){array[ 2 + 17] = 0x03;}
+		if(document.getElementById("stage19").checked){array[ 2 + 18] = 0x03;}
+		if(document.getElementById("stage20").checked){array[ 2 + 19] = 0x03;}
+		if(document.getElementById("stage21").checked){array[ 2 + 20] = 0x03;}
+		if(document.getElementById("stage22").checked){array[ 2 + 21] = 0x03;}
+		if(document.getElementById("stage23").checked){array[ 2 + 22] = 0x03;}
+		if(document.getElementById("stage24").checked){array[ 2 + 23] = 0x03;}
+		if(document.getElementById("stage25").checked){array[ 2 + 24] = 0x03;}
+		if(document.getElementById("stage26").checked){array[ 2 + 25] = 0x03;}
+		if(document.getElementById("stage27").checked){array[ 2 + 26] = 0x03;}
+		if(document.getElementById("story01").checked){array[34 +  0] = 0x03;}
+		if(document.getElementById("story02").checked){array[34 +  1] = 0x03;}
+		if(document.getElementById("story03").checked){array[34 +  2] = 0x03;}
+		if(document.getElementById("story04").checked){array[34 +  3] = 0x03;}
+		if(document.getElementById("story05").checked){array[34 +  4] = 0x03;}
+		if(document.getElementById("popguru").checked){array[50 +  0] = 0x03;}
+		if(document.getElementById("popkuma").checked){array[50 +  1] = 0x03;}
+		if(document.getElementById("popribb").checked){array[50 +  2] = 0x03;}
+		if(document.getElementById("poppebu").checked){array[50 +  3] = 0x03;}
+		if(document.getElementById("popmami").checked){array[50 +  4] = 0x03;}
+		if(document.getElementById("pophand").checked){array[50 +  5] = 0x03;}
+		if(document.getElementById("popbear").checked){array[50 +  6] = 0x03;}
+		if(document.getElementById("popguda").checked){array[50 +  7] = 0x03;}
+		if(document.getElementById("poprobo").checked){array[50 +  8] = 0x03;}
+		var output = utilBase64encode(array).join('');
+		localStorage.setItem(key, output);
+	};
+
+	// ----------------------------------------------------------------
+	// ----------------------------------------------------------------
+	// ----------------------------------------------------------------
+})(this);
+	</script>
+{{end}}
+

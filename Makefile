@@ -15,6 +15,7 @@ copy:
 	rsync -av --delete contents/ src_platform/android/assets/ --exclude='*.ogg'
 	rsync -av --delete contents/ src_platform/ios/assets/ --exclude='*.ogg'
 	rsync -av --delete contents/ src_platform/web/bin/ --exclude='game.js' --exclude='game.js.mem' --exclude='game.html' --exclude='frame.html'
+	rsync -av --delete src_platform/web/bin/ src_server/go/statics/play/
 
 # --------------------------------
 
@@ -63,6 +64,31 @@ ios-debug:
 
 ios-clean:
 	xcodebuild clean -project src_platform/ios/fuhaha.xcodeproj -scheme fuhaha -sdk iphonesimulator -configuration Debug
+
+# --------------------------------
+
+secret: src_client/core/plugin/pluginSecretCoded.h
+
+src_client/core/plugin/pluginSecretCoded.h: src_data/secret/createSecret.c src_data/secret/createSecret.h
+	clang -o src_data/bin/createSecret.out src_data/secret/createSecret.c
+	./src_data/bin/createSecret.out src_client/core/plugin/pluginSecretCoded.h
+
+# --------------------------------
+
+img:
+	sh src_data/image/create.sh
+
+# --------------------------------
+
+go: web-debug copy
+	goapp serve src_server/go/
+
+go-deploy: web-release copy
+	gcloud auth login
+	goapp deploy src_server/go/
+
+go-clean:
+	dev_appserver.py --clear_datastore=yes src_server/go/
 
 # --------------------------------
 

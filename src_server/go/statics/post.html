@@ -1,0 +1,49 @@
+<html><head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+</head><body>
+	<form name="testForm">
+		<table><tr>
+			<td>入力1:</td><td><input type="text" name="data1" value="みょん" /></td>
+		</tr><tr>
+			<td>入力2:</td><td><input type="text" name="data2" value="にゃん" /></td>
+		</tr><tr>
+			<td></td><td><input type="button" value="送信" onclick="testSubmit();" /></td>
+		</tr><tr>
+			<td>出力:</td><td><textarea id="testResponse" rows="5" cols="40"></textarea></td>
+		</tr></table>
+	</form>
+	<script type="text/javascript">
+(function(global){
+	"use strict";
+
+	// ----------------------------------------------------------------
+	// ----------------------------------------------------------------
+	// ----------------------------------------------------------------
+
+	global.testSubmit = function(){
+		var xhr = new XMLHttpRequest();
+		xhr.open("POST", "/test", true);
+		xhr.setRequestHeader("Content-Type","application/json");
+		xhr.responseType = "text";
+		xhr.onreadystatechange = function(){
+			if(xhr.readyState == 4){
+				if(xhr.status == 200){
+					document.getElementById("testResponse").value = xhr.responseText;
+				}else{
+					document.getElementById("testResponse").value = "error";
+				}
+				xhr = null;
+			}
+		};
+		xhr.send(JSON.stringify({
+			data1: document.testForm.data1.value,
+			data2: document.testForm.data2.value,
+		}));
+	};
+
+	// ----------------------------------------------------------------
+	// ----------------------------------------------------------------
+	// ----------------------------------------------------------------
+})(this);
+	</script>
+</body><html>

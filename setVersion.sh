@@ -1,8 +1,8 @@
 #!/bin/bash
 
-IDENTIFIER=com.example.fuhaha
-VERSIONCODE=1
-VERSIONNAME=0.0.1
+IDENTIFIER=com.totetero.gururin2
+VERSIONCODE=10
+VERSIONNAME=1.4.0
 
 # --------------------------------
 

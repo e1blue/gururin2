@@ -1,0 +1,677 @@
+{{define "content"}}
+	{{template "headTitle800" .}}
+	<div class="caption">ステージエディタ</div>
+
+	<table style="margin:10px auto 0;"><tr><td style="border:solid 2px black;background-color:white;">
+		<canvas id="main" width="640" height="480"></canvas>
+	</td><td>
+		<div id="dispxpos">x: 0</div>
+		<div id="dispypos">y: 0</div>
+		<div id="disprot">r: 0</div>
+		<input type="checkbox" id="centering" checked="checked">センタリング</input><br>
+		<div style="width:160px;margin:10px;border:solid 2px black;">
+			<input type="radio" name="mode" id="modeRotate" checked="checked">1) 画面移動回転</input><br>
+			<br>
+			<input type="radio" name="mode" id="modeReset">2) リセット</input><br>
+			<input type="radio" name="mode" id="modeWall">3) 道</input><br>
+			<br>
+			<input type="radio" name="mode" id="modeNeedle">4) トゲトゲ</input><br>
+			<input type="radio" name="mode" id="modeDash">5) ダッシュ</input><br>
+			<br>
+			<input type="radio" name="mode" id="modePlayer">6) プレイヤー</input><br>
+			<input type="radio" name="mode" id="modeEnemy">7) エネミー</input><br>
+			<input type="radio" name="mode" id="modeItem">8) アイテム</input><br>
+		</div>
+		<div>大きさ<input type="range" id="fieldScale" min="0.3" max="2" step="0.1" value="1"></div>
+	</td></tr></table>
+
+	<div style="text-align:center;padding:10px 0px;">
+		<div>
+			<input type="button" id="btnToggle" value="マップ切り替え"></input>
+			<input type="button" id="btnInput" value="↑読み込み"></input>
+			<input type="button" id="btnOutput" value="↓書き出し"></input>
+			<input type="button" id="btnMinimize" value="↓最適化書出"></input>
+			<input type="button" id="btnMaximize" value="↓冗長化書出"></input>
+			<input type="button" id="btnPlay" value="テストプレイ"></input>
+		</div>
+		<textarea id="stageField" cols="80" rows="24"></textarea>
+	</div>
+
+	{{template "footer" .}}
+	<script type="text/javascript" src="/js/ctrl.js"></script>
+	<script type="text/javascript">
+(function(){
+	"use strict";
+
+	// ----------------------------------------------------------------
+	// ----------------------------------------------------------------
+	// ----------------------------------------------------------------
+	// パラメータ
+
+	// キャンバス
+	var canvas = document.getElementById("main");
+	var context = canvas.getContext("2d");
+
+	// ヘックスデータ
+	var hexxmax = 32;
+	var hexymax = 32;
+	var hexSize = 40;
+	var hexList = [[[0]]];
+	var hexData = [[0]];
+	var hexxsize = hexData[0].length;
+	var hexysize = hexData.length;
+	var hexInfo = [[{}]];
+	var hexWallMode = 0;
+	// ヘックス追加要素
+	var playerList = [];
+	var enemyList = [];
+	var itemList = [];
+
+	// 中心位置
+	var centerx = canvas.width * 0.5;
+	var centery = canvas.height * 0.5;
+
+	// 減衰パラメータ
+	var rot0 = 0;
+	var scale0 = 1;
+	var camerax0 = 0;
+	var cameray0 = 0;
+	var rot1 = rot0;
+	var scale1 = scale0;
+	var camerax1 = camerax0;
+	var cameray1 = cameray0;
+	// タッチ一時情報
+	var tempmdn = false;
+	var prevmx;
+	var prevmy;
+
+	// ----------------------------------------------------------------
+	// ----------------------------------------------------------------
+	// ----------------------------------------------------------------
+	// ヘックス関連処理
+
+	var getHexInfo = function(x, y){
+		if(x < 0 || hexxsize <= x){return null;}
+		if(y < 0 || hexysize <= y){return null;}
+		return hexInfo[y][x];
+	};
+
+	var isWall = function(info){return !!(info.type & 0x0001)};
+	var isNeedle = function(info){return (info.type & ~(0x0001 | 0x0002)) ? false : !!(info.type & 0x0002);}
+	var isAccelerator = function(info){if(info.type & ~0x001c){return -1;} var type = ((info.type & 0x001c) >> 2); return (type > 6 ? 6 : type) - 1;}
+
+	// ----------------------------------------------------------------
+	// ----------------------------------------------------------------
+	// ----------------------------------------------------------------
+	// 初期化処理
+
+	var init = function(){
+		// コントローラ初期化
+		ctrl.init(canvas);
+
+		// ヘックス座標基準作成
+		for(var i = 0; i < hexymax; i++){
+			hexInfo[i] = [];
+			for(var j = 0; j < hexxmax; j++){
+				hexInfo[i][j] = {
+					x: j + i * 0.5,
+					y: i * 0.86602540378,
+				};
+			}
+		}
+
+		var data = {{.EditedData}};
+		var setting = {{.EditorData}};
+
+		if(data != null && data.length > 0){
+			// ステージデータの読み込み
+			inputStage(JSON.parse(data));
+			// 読み込んだデータを形成してフィールドに出力
+			var text = outputStage(0, hexxsize - 1, 0, hexysize - 1);
+			document.getElementById("stageField").value = text;
+			camerax0 = camerax1;
+			cameray0 = cameray1;
+		}
+
+		if(setting != null && setting.length > 0){
+			// 設定の読み込み
+			var json =JSON.parse(setting);
+			rot0 = rot1 = json.rot;
+			scale0 = scale1 = document.getElementById("fieldScale").value = json.scale;
+			camerax0 = camerax1 = json.camerax;
+			cameray0 = cameray1 = json.cameray;
+		}
+	};
+
+	// ----------------------------------------------------------------
+	// ----------------------------------------------------------------
+	// ----------------------------------------------------------------
+	// 計算処理
+
+	var calc = function(){
+		// 減衰計算
+		var drot = rot0 - rot1;
+		while(drot < -Math.PI){drot += Math.PI * 2;}
+		while(drot >  Math.PI){drot -= Math.PI * 2;}
+		rot0 -= 0.1 * drot;
+		scale0 -= 0.1 * (scale0 - scale1);
+		camerax0 -= 0.1 * (camerax0 - camerax1);
+		cameray0 -= 0.1 * (cameray0 - cameray1);
+		var c = Math.cos(rot0);
+		var s = Math.sin(rot0);
+
+		var x0 = (ctrl.mx - centerx) / scale0;
+		var y0 = (ctrl.my - centery) / scale0;
+		var x1 =   x0 * c + y0 * s + camerax0;
+		var y1 = - x0 * s + y0 * c + cameray0;
+		var hexy = Math.round(y1 / (hexSize * 0.86602540378));
+		var hexx = Math.round(x1 / hexSize - hexy * 0.5);
+
+		scale1 = document.getElementById("fieldScale").value;
+
+		// ヘックスの描画位置計算
+		for(var i = 0; i < hexysize; i++){
+			for(var j = 0; j < hexxsize; j++){
+				var info = getHexInfo(j, i);
+				var x = hexSize * info.x - camerax0;
+				var y = hexSize * info.y - cameray0;
+				info.posx = scale0 * (x * c - y * s) + centerx;
+				info.posy = scale0 * (x * s + y * c) + centery;
+			}
+		}
+
+		// ヘックスタッチ確認
+		if(tempmdn != ctrl.mdn){
+			tempmdn = ctrl.mdn;
+			if(ctrl.mdn && !ctrl.mmv){
+				// タッチ開始時
+				var info = getHexInfo(hexx, hexy);
+				if(info != null){
+					if(document.getElementById("modeWall").checked){hexWallMode = !(info.type & 0x0001);}
+				}
+			}else if(!ctrl.mdn && !ctrl.mmv){
+				// タッチ完了時
+				if(document.getElementById("centering").checked){
+					// センタリング
+					camerax1 = hexSize * (hexx + hexy * 0.5);
+					cameray1 = hexSize * hexy * 0.86602540378;
+				}
+				// ヘックス設定
+				var info = getHexInfo(hexx, hexy);
+				if(info != null){
+					if(document.getElementById("modeReset").checked){calcHexItemRemove(hexx, hexy); info.type = 0x0001;}
+					if(document.getElementById("modeWall").checked){info.type = (info.type & 0x0002) | (hexWallMode ? 0x0001 : 0x0000);}
+					if(document.getElementById("modeNeedle").checked){
+						// 針トラップ設置
+						calcHexItemRemove(hexx, hexy);
+						var isNeedle = info.type & 0x0002;
+						info.type = (info.type & 0x0001) | (isNeedle ? 0x0000 : 0x0002);
+					}
+					if(document.getElementById("modeDash").checked){
+						// 加速トラップ配置
+						calcHexItemRemove(hexx, hexy);
+						var type = ((info.type & 0x001c) >> 2) + 1;
+						if(type > 6){type = 0;}
+						info.type = (type << 2);
+					}
+					if(document.getElementById("modePlayer").checked){calcHexItemSet(playerList, {x:hexx, y:hexy, hp:100});}
+					if(document.getElementById("modeEnemy").checked){calcHexItemSet(enemyList, {kind:"koro", x:hexx, y:hexy});}
+					if(document.getElementById("modeItem").checked){calcHexItemSet(itemList, {type:"coin", x:hexx, y:hexy});}
+				}
+			}
+		}
+
+		// 画面回転確認
+		if(ctrl.mdn && ctrl.mmv){
+			if(document.getElementById("modeRotate").checked){
+				var x0 = prevmx - centerx;
+				var y0 = prevmy - centery;
+				var r0 = Math.sqrt(x0 * x0 + y0 * y0);
+				var x1 = ctrl.mx - centerx;
+				var y1 = ctrl.my - centery;
+				var r1 = Math.sqrt(x1 * x1 + y1 * y1);
+				if(r0 > 20 && r1 > 20){
+					var cos = (x0 * x1 + y0 * y1) / (r0 * r1);
+					if(cos > 1){cos = 1;}else if(cos < -1){cos = -1;}
+					rot1 += 0.8 * Math.acos(cos) * ((x0 * y1 - y0 * x1 > 0) ? 1 : -1);
+				}
+			}else{
+				// ヘックス設定
+				var info = getHexInfo(hexx, hexy);
+				if(info != null){
+					if(document.getElementById("modeReset").checked){calcHexItemRemove(hexx, hexy); info.type = 0x0001;}
+					if(document.getElementById("modeWall").checked){info.type = (info.type & 0x0002) | (hexWallMode ? 0x0001 : 0x0000);}
+				}
+			}
+		}
+		prevmx = ctrl.mx;
+		prevmy = ctrl.my;
+	};
+
+	// ヘックス追加要素削除関数
+	var calcHexItemRemove = function(x, y){
+		for(var i = 0; i < playerList.length; i++){if(playerList[i].x == x && playerList[i].y == y){playerList.splice(i--, 1);}}
+		for(var i = 0; i < enemyList.length; i++){if(enemyList[i].x == x && enemyList[i].y == y){enemyList.splice(i--, 1);}}
+		for(var i = 0; i < itemList.length; i++){if(itemList[i].x == x && itemList[i].y == y){itemList.splice(i--, 1);}}
+	};
+
+	// ヘックス追加要素設置関数
+	var calcHexItemSet = function(list, data){
+		var isList = false;
+		for(var i = 0; i < list.length; i++){if(list[i].x == data.x && list[i].y == data.y){isList = true; list.splice(i--, 1);}}
+		if(!isList){
+			calcHexItemRemove(data.x, data.y);
+			list.push(data);
+		}
+		getHexInfo(data.x, data.y).type = 0x0000;
+	};
+
+	// ----------------------------------------------------------------
+	// ----------------------------------------------------------------
+	// ----------------------------------------------------------------
+	// 描画処理
+
+	var draw = function(){
+		context.clearRect(0, 0, canvas.width, canvas.height);
+
+		// 画面中央のヘックス座標表示
+		var dispy = Math.round(cameray0 / (hexSize * 0.86602540378));
+		var dispx = Math.round(camerax0 / hexSize - dispy * 0.5);
+		var dispr = Math.round(180 * rot0 / Math.PI);
+		while(dispr >  180){dispr -= 360;}
+		while(dispr < -180){dispr += 360;}
+		document.getElementById("dispxpos").innerHTML = "x: " + dispx;
+		document.getElementById("dispypos").innerHTML = "y: " + dispy;
+		document.getElementById("disprot").innerHTML = "r: " + dispr;
+
+		// 軸描画
+　		context.save();
+		context.strokeStyle = "gray";
+		context.translate(centerx, centery);
+		context.rotate(rot0);
+		context.beginPath(); context.moveTo(-1000, 0); context.lineTo(1000, 0); context.stroke();
+		context.rotate(2 * Math.PI * 60 / 360);
+		context.beginPath(); context.moveTo(-1000, 0); context.lineTo(1000, 0); context.stroke();
+		context.restore();
+
+		// ヘックス描画
+		context.fillStyle = "gray";
+		context.strokeStyle = "black";
+		for(var i = 0; i < hexysize; i++){
+			for(var j = 0; j < hexxsize; j++){
+				var info = getHexInfo(j, i);
+				context.beginPath();
+				for(var k = 0; k < 6; k++){
+					var radius = ((hexSize * scale0) / 2) / 0.86602540378;
+					var theta = k * (360 / 6) / 180 * Math.PI - rot0;
+					var x = info.posx + radius * Math.sin(theta);
+					var y = info.posy + radius * Math.cos(theta);
+					if(k == 0){context.moveTo(x, y);}else{context.lineTo(x, y);}
+				}
+				context.closePath();
+				if(isWall(info)){context.fill();}
+				context.stroke();
+			}
+		}
+
+		// 壁描画
+		context.strokeStyle = "black";
+		for(var i = 0; i < hexysize; i++){
+			for(var j = 0; j < hexxsize; j++){
+				var info0 = getHexInfo(j, i);
+				if(!isWall(info0)){continue;}
+				var info1 = getHexInfo(j + 1, i + 0); var isBarrier1 = (info1 == null || isWall(info1));
+				var info2 = getHexInfo(j + 1, i - 1); var isBarrier2 = (info2 == null || isWall(info2));
+				var info3 = getHexInfo(j + 0, i - 1); var isBarrier3 = (info3 == null || isWall(info3));
+				var info4 = getHexInfo(j - 1, i + 0); var isBarrier4 = (info4 == null || isWall(info4));
+				var info5 = getHexInfo(j - 1, i + 1); var isBarrier5 = (info5 == null || isWall(info5));
+				var info6 = getHexInfo(j + 0, i + 1); var isBarrier6 = (info6 == null || isWall(info6));
+				if((info1 != null && isWall(info1)) && !(isBarrier6 && isBarrier2)){drawHexWall(info0.posx, info0.posy, info1.posx, info1.posy);}
+				if((info5 != null && isWall(info5)) && !(isBarrier4 && isBarrier6)){drawHexWall(info0.posx, info0.posy, info5.posx, info5.posy);}
+				if((info6 != null && isWall(info6)) && !(isBarrier5 && isBarrier1)){drawHexWall(info0.posx, info0.posy, info6.posx, info6.posy);}
+			}
+		}
+
+		// トラップ描画
+		for(var i = 0; i < hexysize; i++){
+			for(var j = 0; j < hexxsize; j++){
+				var info = getHexInfo(j, i);
+
+				if(isNeedle(info)){
+					// トゲトゲ描画
+					context.save();
+					context.fillStyle = "gray";
+					context.translate(info.posx, info.posy);
+					context.rotate(rot0);
+					context.scale(scale0, scale0);
+					context.beginPath();
+					context.moveTo( 4 * Math.cos(2 * Math.PI *   0 / 360),  4 * Math.sin(2 * Math.PI *   0 / 360));
+					context.lineTo(12 * Math.cos(2 * Math.PI *  30 / 360), 12 * Math.sin(2 * Math.PI *  30 / 360));
+					context.lineTo( 4 * Math.cos(2 * Math.PI *  60 / 360),  4 * Math.sin(2 * Math.PI *  60 / 360));
+					context.lineTo(12 * Math.cos(2 * Math.PI *  90 / 360), 12 * Math.sin(2 * Math.PI *  90 / 360));
+					context.lineTo( 4 * Math.cos(2 * Math.PI * 120 / 360),  4 * Math.sin(2 * Math.PI * 120 / 360));
+					context.lineTo(12 * Math.cos(2 * Math.PI * 150 / 360), 12 * Math.sin(2 * Math.PI * 150 / 360));
+					context.lineTo( 4 * Math.cos(2 * Math.PI * 180 / 360),  4 * Math.sin(2 * Math.PI * 180 / 360));
+					context.lineTo(12 * Math.cos(2 * Math.PI * 210 / 360), 12 * Math.sin(2 * Math.PI * 210 / 360));
+					context.lineTo( 4 * Math.cos(2 * Math.PI * 240 / 360),  4 * Math.sin(2 * Math.PI * 240 / 360));
+					context.lineTo(12 * Math.cos(2 * Math.PI * 270 / 360), 12 * Math.sin(2 * Math.PI * 270 / 360));
+					context.lineTo( 4 * Math.cos(2 * Math.PI * 300 / 360),  4 * Math.sin(2 * Math.PI * 300 / 360));
+					context.lineTo(12 * Math.cos(2 * Math.PI * 330 / 360), 12 * Math.sin(2 * Math.PI * 330 / 360));
+					context.closePath();
+					context.fill();
+					context.stroke();
+					context.restore();
+				}
+
+				var accRot = isAccelerator(info);
+				if(accRot >= 0){
+					// ダッシュ描画
+					context.fillStyle = "gray";
+					context.save();
+					context.translate(info.posx, info.posy);
+					context.rotate(rot0 + 2 * Math.PI * (300 - 60 * accRot) / 360);
+					context.scale(scale0, scale0);
+					context.beginPath();
+					context.moveTo( 10,  0);
+					context.lineTo(-10,  8);
+					context.lineTo( -5,  0);
+					context.lineTo(-10, -8);
+					context.closePath();
+					context.fill();
+					context.stroke();
+					context.restore();
+				}
+			}
+		}
+
+		// ヘックス追加要素描画
+		context.fillStyle = "red";
+		drawHexItem(playerList);
+		context.fillStyle = "green";
+		drawHexItem(enemyList);
+		context.fillStyle = "yellow";
+		drawHexItem(itemList);
+	};
+
+	// ヘックス壁描画関数
+	var drawHexWall = function(x0, y0, x1, y1){
+		context.beginPath();
+		context.moveTo(x0, y0);
+		context.lineTo(x1, y1);
+		context.stroke();
+	};
+
+	// ヘックス追加要素描画関数
+	var drawHexItem = function(list){
+		for(var i = 0; i < list.length; i++){
+			var info = getHexInfo(list[i].x, list[i].y);
+			context.beginPath();
+			context.arc(info.posx, info.posy, 10 * scale0, 0, Math.PI * 2, true);
+			context.fill();
+			context.stroke();
+		}
+	};
+
+	// ----------------------------------------------------------------
+	// ----------------------------------------------------------------
+	// ----------------------------------------------------------------
+
+	// 読み込んだjsonを保存
+	var inputJson = {};
+
+	// テキストエリア読み込み関数
+	var inputStage = function(json){
+		inputJson = (json != null) ? json : JSON.parse(document.getElementById("stageField").value);
+		playerList = (inputJson.player != null) ? inputJson.player : [];
+		enemyList = (inputJson.enemy != null) ? inputJson.enemy : [];
+		itemList = (inputJson.item != null) ? inputJson.item : [];
+		hexList = (inputJson.map != null) ? inputJson.map : [[[0]]];
+		hexData = hexList[0];
+		hexxsize = hexData[0].length;
+		hexysize = hexData.length;
+		// ヘックスに情報挿入
+		for(var i = 0; i < hexysize; i++){
+			for(var j = 0; j < hexxsize; j++){
+				hexInfo[i][j].type = hexData[i][j];
+			}
+		}
+		// センタリング
+		var x = (hexxsize - 1) * 0.5;
+		var y = (hexysize - 1) * 0.5;
+		camerax1 = hexSize * (x + y * 0.5);
+		cameray1 = hexSize * y * 0.86602540378;
+		// マップ切り替え可否確認
+		document.getElementById("btnToggle").disabled = (inputJson.map.length < 2);
+	};
+
+	// テキストエリア書き込み関数
+	var outputStage = function(xmin, xmax, ymin, ymax){
+		var text = "";
+
+		// ヘックスデータ作成
+		var hexData = [];
+		for(var i = ymin; i <= ymax; i++){
+			hexData[i - ymin] = [];
+			for(var j = xmin; j <= xmax; j++){
+				var info = getHexInfo(j, i);
+				var type = (info != null) ? info.type : 0x0001;
+				hexData[i - ymin][j - xmin] = type;
+			}
+		}
+		hexList[0] = hexData;
+
+		// ヘックス出力関数
+		var outputHex = function(){
+			for(var i = 0; i < hexList.length; i++){
+				if(i != 0){text += ",\n";}
+				text += "\t\t[\n";
+				for(var j = 0; j < hexList[i].length; j++){
+					if(j != 0){text += ",\n";}
+					text += "\t\t\t" + JSON.stringify(hexList[i][j]);
+				}
+				text += "\n\t\t]";
+			}
+		};
+
+		// ヘックス追加要素出力関数
+		var outputItem = function(list){
+			for(var i = 0; i < list.length; i++){
+				if(i != 0){text += ",\n";}
+				var x = list[i].x;
+				var y = list[i].y;
+				list[i].x -= xmin;
+				list[i].y -= ymin;
+				text += "\t\t" + JSON.stringify(list[i]);
+				list[i].x = x;
+				list[i].y = y;
+			}
+		};
+
+		// その他パラメータ出力関数
+		var outputOtherParam = function(key){
+			if(inputJson[key] != null){
+				text += "\n\t\"" + key + "\": " + JSON.stringify(inputJson[key]) + ",";
+			}
+		};
+
+		text += "{";
+		outputOtherParam("name");
+		outputOtherParam("icon");
+		outputOtherParam("mark");
+		outputOtherParam("wall1");
+		outputOtherParam("wall2");
+		text += "\n";
+		outputOtherParam("health");
+		outputOtherParam("gravityPower");
+		outputOtherParam("openStage");
+		outputOtherParam("openStory");
+		outputOtherParam("openPuppet");
+		text += "\n\n\t\"map\": [\n";
+		outputHex();
+		text += "\n\t],\n\n\t\"player\": [\n";
+		outputItem(playerList);
+		text += "\n\t],\n\n\t\"enemy\": [\n";
+		outputItem(enemyList);
+		text += "\n\t],\n\n\t\"item\": [\n";
+		outputItem(itemList);
+		text += "\n\t]\n}";
+
+		return text;
+	};
+
+	// マップ切り替え
+	document.getElementById("btnToggle").addEventListener("click", function(e){
+		var text = outputStage(0, hexxsize - 1, 0, hexysize - 1);
+		//var text = document.getElementById("stageField").value;
+
+		var json = JSON.parse(text);
+		if(json.map.length < 2){return;}
+		for(var i = 1; i < json.map.length; i++){
+			var oldMap = json.map[0];
+			var newMap = json.map[i];
+			if(oldMap[0].length != newMap[0].length){continue;}
+			if(oldMap[0][0].length != newMap[0][0].length){continue;}
+			json.map[0] = newMap;
+			json.map[i] = oldMap;
+			// 切り替えたステージデータの読み込み
+			inputStage(json);
+			// 読み込んだデータを形成してフィールドに出力
+			var text = outputStage(0, hexxsize - 1, 0, hexysize - 1);
+			document.getElementById("stageField").value = text;
+			// 切り替え完了
+			break;
+		}
+	}, true);
+
+	// テキストエリア読み込み
+	document.getElementById("btnInput").addEventListener("click", function(e){
+		inputStage();
+	}, true);
+
+	// テキストエリア書き込み
+	document.getElementById("btnOutput").addEventListener("click", function(e){
+		var text = outputStage(0, hexxsize - 1, 0, hexysize - 1);
+		document.getElementById("stageField").value = text;
+	}, true);
+
+	// テキストエリア最適化書き込み
+	document.getElementById("btnMinimize").addEventListener("click", function(e){
+		// 範囲確認
+		var xmax = -1;
+		var xmin = -1;
+		var ymax = -1;
+		var ymin = -1;
+		for(var i = 0; i < hexysize; i++){
+			for(var j = 0; j < hexxsize; j++){
+				var info = getHexInfo(j, i);
+				if(info.type & 0x0001){continue;}
+				if(xmax < 0 || xmax < j){xmax = j;}
+				if(xmin < 0 || xmin > j){xmin = j;}
+				if(ymax < 0 || ymax < i){ymax = i;}
+				if(ymin < 0 || ymin > i){ymin = i;}
+			}
+		}
+		if(xmax >= 0 && xmin >= 0 && ymax >= 0 && ymin >= 0){
+			// 書き込み
+			var text = outputStage(xmin - 1, xmax + 1, ymin - 1, ymax + 1);
+			document.getElementById("stageField").value = text;
+		}
+	}, true);
+
+	// テキストエリア冗長化書き込み
+	document.getElementById("btnMaximize").addEventListener("click", function(e){
+		// 範囲確認
+		var xmax = -1;
+		var xmin = -1;
+		var ymax = -1;
+		var ymin = -1;
+		for(var i = 0; i < hexysize; i++){
+			for(var j = 0; j < hexxsize; j++){
+				var info = getHexInfo(j, i);
+				if(info.type & 0x0001){continue;}
+				if(xmax < 0 || xmax < j){xmax = j;}
+				if(xmin < 0 || xmin > j){xmin = j;}
+				if(ymax < 0 || ymax < i){ymax = i;}
+				if(ymin < 0 || ymin > i){ymin = i;}
+			}
+		}
+		if(xmax >= 0 && xmin >= 0 && ymax >= 0 && ymin >= 0){
+			// 書き込み
+			var xbase = xmin - Math.floor((hexxmax - (xmax - xmin)) * 0.5);
+			var ybase = ymin - Math.floor((hexymax - (ymax - ymin)) * 0.5);
+			var text = outputStage(xbase, xbase + hexxmax - 1, ybase, ybase + hexymax - 1);
+			document.getElementById("stageField").value = text;
+		}
+	}, true);
+
+	// テストプレイ開始
+	document.getElementById("btnPlay").addEventListener("click", function(e){
+		var text = outputStage(0, hexxsize - 1, 0, hexysize - 1);
+		//var text = document.getElementById("stageField").value;
+
+		var input1 = document.createElement("input");
+		input1.type = "hidden";
+		input1.name = "edited";
+		input1.value = JSON.stringify(JSON.parse(text));
+
+		var input2 = document.createElement("input");
+		input2.type = "hidden";
+		input2.name = "editor";
+		input2.value = JSON.stringify({
+			rot: rot0,
+			scale: scale0,
+			camerax: camerax0,
+			cameray: cameray0,
+		});
+
+		var form = document.createElement("form");
+		document.body.appendChild(form);
+		form.appendChild(input1);
+		form.appendChild(input2);
+		form.action = "/edited";
+		form.method = "POST";
+		form.submit();
+	}, true);
+
+	// モード切り替え時のセンタリング設定
+	document.getElementById("modeRotate").addEventListener("click", function(e){document.getElementById("centering").checked = true;});
+	document.getElementById("modeReset").addEventListener("click", function(e){document.getElementById("centering").checked = false;});
+	document.getElementById("modeWall").addEventListener("click", function(e){document.getElementById("centering").checked = false;});
+	document.getElementById("modeNeedle").addEventListener("click", function(e){document.getElementById("centering").checked = false;});
+	document.getElementById("modeDash").addEventListener("click", function(e){document.getElementById("centering").checked = false;});
+	document.getElementById("modePlayer").addEventListener("click", function(e){document.getElementById("centering").checked = false;});
+	document.getElementById("modeEnemy").addEventListener("click", function(e){document.getElementById("centering").checked = false;});
+	document.getElementById("modeItem").addEventListener("click", function(e){document.getElementById("centering").checked = false;});
+
+	// キーボードによるモード設定
+	document.addEventListener("keyup", function(e){
+		if(e.keyCode == 49){document.getElementById("centering").checked = true; document.getElementById("modeRotate").checked = true;}
+		if(e.keyCode == 50){document.getElementById("centering").checked = false; document.getElementById("modeReset").checked = true;}
+		if(e.keyCode == 51){document.getElementById("centering").checked = false; document.getElementById("modeWall").checked = true;}
+		if(e.keyCode == 52){document.getElementById("centering").checked = false; document.getElementById("modeNeedle").checked = true;}
+		if(e.keyCode == 53){document.getElementById("centering").checked = false; document.getElementById("modeDash").checked = true;}
+		if(e.keyCode == 54){document.getElementById("centering").checked = false; document.getElementById("modePlayer").checked = true;}
+		if(e.keyCode == 55){document.getElementById("centering").checked = false; document.getElementById("modeEnemy").checked = true;}
+		if(e.keyCode == 56){document.getElementById("centering").checked = false; document.getElementById("modeItem").checked = true;}
+	});
+
+	// ----------------------------------------------------------------
+	// ----------------------------------------------------------------
+	// ----------------------------------------------------------------
+	// メインループ
+
+	var mainloop = function(){
+		calc();
+		draw();
+		setTimeout(mainloop, 16);
+	};
+	init();
+	mainloop();
+
+	// ----------------------------------------------------------------
+	// ----------------------------------------------------------------
+	// ----------------------------------------------------------------
+})();
+	</script>
+{{end}}
+

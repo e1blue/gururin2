@@ -1,0 +1,88 @@
+<html><head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1, maximum-scale=1">
+	<meta name="apple-mobile-web-app-capable" content="yes">
+	<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+	<link rel="shortcut icon" href="/favicon.ico" type="image/vnd.microsoft.icon">
+	<link rel="icon" href="/favicon.ico" type="image/vnd.microsoft.icon">
+	<link rel="apple-touch-icon" sizes="57x57" href="/favicons/apple-touch-icon-57x57.png">
+	<link rel="apple-touch-icon" sizes="60x60" href="/favicons/apple-touch-icon-60x60.png">
+	<link rel="apple-touch-icon" sizes="72x72" href="/favicons/apple-touch-icon-72x72.png">
+	<link rel="apple-touch-icon" sizes="76x76" href="/favicons/apple-touch-icon-76x76.png">
+	<link rel="apple-touch-icon" sizes="114x114" href="/favicons/apple-touch-icon-114x114.png">
+	<link rel="apple-touch-icon" sizes="120x120" href="/favicons/apple-touch-icon-120x120.png">
+	<link rel="apple-touch-icon" sizes="144x144" href="/favicons/apple-touch-icon-144x144.png">
+	<link rel="apple-touch-icon" sizes="152x152" href="/favicons/apple-touch-icon-152x152.png">
+	<link rel="apple-touch-icon" sizes="180x180" href="/favicons/apple-touch-icon-180x180.png">
+	<link rel="icon" type="image/png" href="/favicons/android-chrome-192x192.png" sizes="192x192">
+	<link rel="icon" type="image/png" href="/favicons/favicon-48x48.png" sizes="48x48">
+	<link rel="icon" type="image/png" href="/favicons/favicon-96x96.png" sizes="96x96">
+	<link rel="icon" type="image/png" href="/favicons/favicon-16x16.png" sizes="16x16">
+	<link rel="icon" type="image/png" href="/favicons/favicon-32x32.png" sizes="32x32">
+	<link rel="manifest" href="/favicons/manifest.json">
+	<meta name="msapplication-TileColor" content="#2d88ef">
+	<meta name="msapplication-TileImage" content="/mstile-144x144.png">
+
+	<title>グルリンダッシュ {{.Title}}</title>
+	<style type="text/css">
+		body{margin:0;color:white;background-image:url(/img/background.png);background-size:240px;}
+		.caption{color:darkcyan;background-color:aquamarine;text-align:center;}
+	</style>
+	<script type="text/javascript" src="/js/i18n.js"></script>
+</head><body>
+	{{template "content" .}}
+</body></html>
+
+{{define "headTitle800"}}<div style="margin:auto;max-width:800px;text-align:left;"><div style="width:255px;height:90px;background-image:url(/img/title.png);background-size:255px 90px;"></div></div>{{end}}
+{{define "headTitle500"}}<div style="margin:auto;max-width:500px;text-align:left;"><div style="width:255px;height:90px;background-image:url(/img/title.png);background-size:255px 90px;"></div></div>{{end}}
+
+{{define "gameFrame"}}
+	<div style="text-align:center;"><iframe width="288px" height="432px" id="gameFrame" src="/play/game.html" scrolling="no" frameborder="0"></iframe></div>
+{{end}}
+
+{{define "downloadApp"}}
+	<div class="caption"><span id="i18n_spanId_getApp_caption"></span></div>
+
+	<div style="text-align:center;padding:10px 0px;">
+		<div>
+			<span class="i18n_ja"><a href="https://play.google.com/store/apps/details?id=com.totetero.gururin2"><img src="/img/badge_and_ja.png" height="40"></a></span>
+			<span class="i18n_en"><a href="https://play.google.com/store/apps/details?id=com.totetero.gururin2"><img src="/img/badge_and_en.png" height="40"></a></span>
+			<span class="i18n_ja"><a href="https://itunes.apple.com/jp/app/gururindasshu/id1078771331"><img src="/img/badge_ios_ja.png" height="40"></a></span>
+			<span class="i18n_en"><a href="https://itunes.apple.com/us/app/gururin-dash/id1078771331"><img src="/img/badge_ios_en.png" height="40"></a></span>
+		</div>
+		<div><span id="i18n_spanId_getApp_asterisk_free"></span></div>
+	</div>
+{{end}}
+
+{{define "downloadWeb"}}
+	<div class="caption"><span id="i18n_spanId_getWeb_caption"></span></div>
+
+	<div style="text-align:center;padding:10px 0px;">
+		<div class="i18n_ja"><a href="/play"><img src="/img/banner_trial.png" style="width:120px; height:45px;"></a></div>
+		<div class="i18n_en"><a href="/play"><img src="/img/banner_trial.png" style="width:120px; height:45px;"></a></div>
+		<div><span id="i18n_spanId_getWeb_asterisk_webgl"></span></div>
+		<div><span id="i18n_spanId_getWeb_asterisk_appData"></span></div>
+	</div>
+{{end}}
+
+{{define "credit"}}
+	<div class="caption"><span id="i18n_spanId_credit_caption"></span></span></div>
+
+	<table style="margin:10px auto;">
+		<tr><td style="text-align:right;"><span id="i18n_spanId_credit_game"></span>:</td><td style="text-align:left;">ぽろゆき<a href="https://twitter.com/totetero">@totetero</a></td></tr>
+		<tr><td style="text-align:right;"><span id="i18n_spanId_credit_movie"></span>:</td><td style="text-align:left;">ふるめた<a href="https://twitter.com/spiritedge">@spiritedge</a></td></tr>
+		<tr><td style="text-align:right;"><span id="i18n_spanId_credit_sound"></span>:</td><td style="text-align:left;"><a href="http://musix51.com/">MUSiX51</a> <a href="http://maoudamashii.jokersounds.com/">魔王魂</a> <a href="http://osabisi.sakura.ne.jp/m2/index.html">ザ・マッチメイカァズ</a></td></tr>
+	</table>
+{{end}}
+
+{{define "backLink"}}
+	<div class="caption"><span style="color:transparent;">.</span></span></div>
+
+	<div style="text-align:center;padding:10px 0px;"><a href="/"><span id="i18n_spanId_backLink_top"></span></a></div>
+{{end}}
+
+{{define "footer"}}
+	<div class="caption">2016 <a href="http://totetero.com">totetero.com</a></div>
+{{end}}
+

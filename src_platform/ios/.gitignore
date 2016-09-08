@@ -1,3 +1,4 @@
+
 build/
 *.pbxuser
 !default.pbxuser
@@ -14,3 +15,8 @@ DerivedData
 *.hmap
 *.ipa
 *.xcuserstate
+
+Pods
+Podfile.lock
+*.xcworkspace/contents.xcworkspacedata
+

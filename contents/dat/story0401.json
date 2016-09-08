@@ -1,0 +1,138 @@
+{
+	"name": "big enemy",
+	"icon": 1,
+	"wall": 12,
+
+	"story": [
+		{
+			"command": "createMap",
+			"mapId": 1,
+			"mapchip": [[
+				[11, 11, 11, 11, 11, 11, 11, 11],
+				[11, 11, 11, 11, 11, 11, 11, 11],
+				[11, 11, 11, 11, 11, 11, 11, 11],
+				[11, 11, 11, 11, 11, 11, 11, 11],
+				[11, 11, 11, 11, 11, 11, 11, 11],
+				[11, 11, 11, 11, 11, 11, 11, 11],
+				[11, 11, 11, 11, 11, 11, 11, 11],
+				[11, 11, 11, 11, 11, 11, 11, 11],
+			],[
+				[11, 11, 11, 11,  0, 11, 11, 11],
+				[11,  0, 11,  0,  0,  0, 11,  0],
+				[ 0,  0,  0,  0,  0,  0,  0,  0],
+				[ 0,  0, 11, 11,  0,  0,  0,  0],
+				[ 0,  0,  0,  0,  0,  0,  0,  0],
+				[ 0,  0,  0,  0,  0, 11, 11,  0],
+				[ 0,  0,  0,  0,  0,  0,  0,  0],
+				[ 0,  0,  0,  0,  0,  0,  0,  0],
+			],[
+				[11, 11, 11,  0,  0,  0,  0, 11],
+				[ 0,  0,  0,  0,  0,  0,  0,  0],
+				[ 0,  0,  0,  0,  0,  0,  0,  0],
+				[ 0,  0,  0, 11,  0,  0,  0,  0],
+				[ 0,  0,  0,  0,  0,  0,  0,  0],
+				[ 0,  0,  0,  0,  0,  0,  0,  0],
+				[ 0,  0,  0,  0,  0,  0,  0,  0],
+				[ 0,  0,  0,  0,  0,  0,  0,  0],
+			],[
+				[11, 11, 11,  0,  0,  0,  0, 11],
+				[ 0,  0,  0,  0,  0,  0,  0,  0],
+				[ 0,  0,  0,  0,  0,  0,  0,  0],
+				[ 0,  0,  0,  0,  0,  0,  0,  0],
+				[ 0,  0,  0,  0,  0,  0,  0,  0],
+				[ 0,  0,  0,  0,  0,  0,  0,  0],
+				[ 0,  0,  0,  0,  0,  0,  0,  0],
+				[ 0,  0,  0,  0,  0,  0,  0,  0],
+			]],
+		},
+		{"command": "createChara", "charaId": 2, "kind": "koro"},
+		{"command": "setCharaStatus", "charaId": 2, "x": 8, "y": 6.5, "z": 1, "r": 180},
+		{"command": "setCamera", "x": 8, "y": 6.5, "z": 1},
+
+		{"command": "actCharaWalk", "charaId": 2, "x": 7, "y": 6.5, "speed": 4},
+		{"command": "wait"},
+
+		{"command": "createChara", "charaId": 1, "kind": "default"},
+		{"command": "setCharaStatus", "charaId": 1, "x": 8, "y": 6.5, "z": 1, "r": 180},
+		{"command": "setCamera", "charaId": 1},
+
+		{"command": "actCharaWalk", "charaId": 1, "x": 2, "y": 6.5, "speed": 4},
+		{"command": "actCharaWalk", "charaId": 2, "x": 1, "y": 6.5, "speed": 4},
+		{"command": "wait"},
+
+		{"command": "skipBreak"},
+
+		{"command": "actCharaWalk", "charaId": 1, "x": 1, "y": 6.5, "speed": 4},
+		{"command": "actCharaWalk", "charaId": 2, "x": 0, "y": 6.5, "speed": 4},
+		{"command": "wait"},
+
+		{"command": "removeChara", "charaId": 2},
+		{"command": "actCharaWalk", "charaId": 1, "x": 0, "y": 6.5, "speed": 4},
+		{"command": "wait"},
+
+		{"command": "removeChara", "charaId": 1},
+		{"command": "setCamera", "x": 0, "y": 6.5, "z": 1},
+
+		{"command": "wait", "time": 1},
+
+		{"command": "createChara", "charaId": 2, "kind": "koro"},
+		{"command": "setCharaStatus", "charaId": 2, "x": 0, "y": 2.5, "z": 1, "r": 0},
+		{"command": "setCamera", "x": 0, "y": 2.5, "z": 1},
+
+		{"command": "actCharaWalk", "charaId": 2, "x": 1, "y": 2.5, "speed": 4},
+		{"command": "wait"},
+
+		{"command": "createChara", "charaId": 1, "kind": "default"},
+		{"command": "setCharaStatus", "charaId": 1, "x": 0, "y": 2.5, "z": 1, "r": 0},
+		{"command": "setCamera", "charaId": 1},
+
+		{"command": "actCharaWalk", "charaId": 1, "x": 6, "y": 2.5, "speed": 4},
+		{"command": "actCharaWalk", "charaId": 2, "x": 7, "y": 2.5, "speed": 4},
+		{"command": "wait"},
+
+		{"command": "skipBreak"},
+
+		{"command": "actCharaWalk", "charaId": 1, "x": 7, "y": 2.5, "speed": 4},
+		{"command": "actCharaWalk", "charaId": 2, "x": 8, "y": 2.5, "speed": 4},
+		{"command": "wait"},
+
+		{"command": "removeChara", "charaId": 2},
+		{"command": "actCharaWalk", "charaId": 1, "x": 8, "y": 2.5, "speed": 4},
+		{"command": "wait"},
+
+		{"command": "removeChara", "charaId": 1},
+		{"command": "setCamera", "x": 8, "y": 2.5, "z": 1},
+
+		{"command": "wait", "time": 1},
+
+		{"command": "createChara", "charaId": 1, "kind": "default"},
+		{"command": "setCharaStatus", "charaId": 1, "x": 8, "y": 4.5, "z": 1, "r": 180},
+		{"command": "setCamera", "charaId": 1},
+
+		{"command": "actCharaWalk", "charaId": 1, "x": 6, "y": 4.5, "speed": 4},
+		{"command": "wait"},
+
+		{"command": "createChara", "charaId": 3, "kind": "armo", "scale": 4},
+		{"command": "setCharaStatus", "charaId": 3, "x": 8, "y": 4.5, "z": 1, "r": 180},
+
+		{"command": "actCharaWalk", "charaId": 1, "x": 1, "y": 4.5, "speed": 4},
+		{"command": "actCharaWalk", "charaId": 3, "x": 3, "y": 4.5, "speed": 4},
+		{"command": "wait"},
+
+		{"command": "skipBreak"},
+
+		{"command": "actCharaWalk", "charaId": 1, "x": 0, "y": 4.5, "speed": 4},
+		{"command": "actCharaWalk", "charaId": 3, "x": 2, "y": 4.5, "speed": 4},
+		{"command": "wait"},
+
+		{"command": "removeChara", "charaId": 1},
+		{"command": "setCamera", "x": 0, "y": 4.5, "z": 1},
+		{"command": "actCharaWalk", "charaId": 3, "x": 0, "y": 4.5, "speed": 4},
+		{"command": "wait"},
+
+		{"command": "removeChara", "charaId": 3},
+		{"command": "setCamera", "x": 0, "y": 4.5, "z": 1},
+
+		{"command": "skipBreak"},
+	]
+}

@@ -1,0 +1,121 @@
+{{define "content"}}
+	{{template "headTitle500" .}}
+	{{template "gameFrame" .}}
+
+	<div class="caption">ステージエディタ</div>
+
+	<div style="text-align:center;padding:10px 0px;">
+		<div>
+			<input type="button" id="btnEdit" value="編集する"></input>
+		</div>
+		<textarea id="stageField" cols="80" rows="24"></textarea>
+	</div>
+
+	{{template "footer" .}}
+	<script type="text/javascript">
+(function(global){
+	"use strict";
+
+	// ----------------------------------------------------------------
+	// ----------------------------------------------------------------
+	// ----------------------------------------------------------------
+
+	var data = {{.EditedData}};
+	var setting = {{.EditorData}};
+
+	var inputJson = JSON.parse(data);
+	document.getElementById("gameFrame").contentWindow.editedData = inputJson;
+
+	// 編集に戻るボタン
+	document.getElementById("btnEdit").addEventListener("click", function(e){
+		var input1 = document.createElement("input");
+		input1.type = "hidden";
+		input1.name = "edited";
+		input1.value = data;
+
+		var input2 = document.createElement("input");
+		input2.type = "hidden";
+		input2.name = "editor";
+		input2.value = setting;
+
+		var form = document.createElement("form");
+		document.body.appendChild(form);
+		form.appendChild(input1);
+		form.appendChild(input2);
+		form.action = "/editor";
+		form.method = "POST";
+		form.submit();
+	}, true);
+
+	// テキストエリア書き込み関数
+	var outputStage = function(){
+		var text = "";
+		var hexList = inputJson.map;
+		var playerList = inputJson.player;
+		var enemyList = inputJson.enemy;
+		var itemList = inputJson.item;
+
+		// ヘックス出力関数
+		var outputHex = function(){
+			for(var i = 0; i < hexList.length; i++){
+				if(i != 0){text += ",\n";}
+				text += "\t\t[\n";
+				for(var j = 0; j < hexList[i].length; j++){
+					if(j != 0){text += ",\n";}
+					text += "\t\t\t" + JSON.stringify(hexList[i][j]);
+				}
+				text += "\n\t\t]";
+			}
+		};
+
+		// ヘックス追加要素出力関数
+		var outputItem = function(list){
+			for(var i = 0; i < list.length; i++){
+				if(i != 0){text += ",\n";}
+				text += "\t\t" + JSON.stringify(list[i]);
+			}
+		};
+
+		// その他パラメータ出力関数
+		var outputOtherParam = function(key){
+			if(inputJson[key] != null){
+				text += "\n\t\"" + key + "\": " + JSON.stringify(inputJson[key]) + ",";
+			}
+		};
+
+		text += "{";
+		outputOtherParam("name");
+		outputOtherParam("icon");
+		outputOtherParam("mark");
+		outputOtherParam("wall1");
+		outputOtherParam("wall2");
+		text += "\n";
+		outputOtherParam("health");
+		outputOtherParam("gravityPower");
+		outputOtherParam("openStage");
+		outputOtherParam("openStory");
+		outputOtherParam("openPuppet");
+		text += "\n\n\t\"map\": [\n";
+		outputHex();
+		text += "\n\t],\n\n\t\"player\": [\n";
+		outputItem(playerList);
+		text += "\n\t],\n\n\t\"enemy\": [\n";
+		outputItem(enemyList);
+		text += "\n\t],\n\n\t\"item\": [\n";
+		outputItem(itemList);
+		text += "\n\t]\n}";
+
+		return text;
+	}
+
+	// テキストエリア書き込み
+	var text = outputStage();
+	document.getElementById("stageField").value = text;
+
+	// ----------------------------------------------------------------
+	// ----------------------------------------------------------------
+	// ----------------------------------------------------------------
+})(this);
+	</script>
+{{end}}
+

@@ -7,7 +7,7 @@
 
 // url取得 返値文字列は揮発性バッファで解放禁止
 char *gamePluginUtilUrlGet(void){
-	char *value = "http://totetero.com/cgi-bin/php";
+	char *value = "https://gururin-dash.appspot.com";
 	char *buff = (char*)corePluginUtilMemoryTemporary(strlen(value) + 1);
 	strcpy(buff, value);
 	return buff;

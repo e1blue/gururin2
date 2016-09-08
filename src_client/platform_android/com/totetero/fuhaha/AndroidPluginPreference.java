@@ -13,7 +13,7 @@ public class AndroidPluginPreference{
 	// 設定準備
 	private static SharedPreferences pref = null;
 	private static SharedPreferences.Editor editor = null;
-	private static SharedPreferences getPref(){if(AndroidPluginPreference.pref == null){AndroidPluginPreference.pref = FuhahaGLView.activity.getSharedPreferences("fuhaha", FuhahaGLView.activity.MODE_PRIVATE);} return AndroidPluginPreference.pref;}
+	private static SharedPreferences getPref(){if(AndroidPluginPreference.pref == null){AndroidPluginPreference.pref = FuhahaGLView.activity.getSharedPreferences("fuhaha", FuhahaGLView.activity.MODE_PRIVATE);} return AndroidPluginPreference.pref;} // 変更禁止
 	private static SharedPreferences.Editor getEdit(){if(AndroidPluginPreference.editor == null){AndroidPluginPreference.editor = AndroidPluginPreference.getPref().edit();} return AndroidPluginPreference.editor;}
 
 	// 設定読み込み

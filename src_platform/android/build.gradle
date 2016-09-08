@@ -37,9 +37,9 @@ gradle.projectsEvaluated{
 
 apply plugin: "com.android.model.application"
 
-project.ext.fuhahaApplicationId = "com.example.fuhaha"
-project.ext.fuhahaVersionCode = 1
-project.ext.fuhahaVersionName = "0.0.1"
+project.ext.fuhahaApplicationId = "com.totetero.gururin2"
+project.ext.fuhahaVersionCode = 10
+project.ext.fuhahaVersionName = "1.4.0"
 
 model{
 	android{

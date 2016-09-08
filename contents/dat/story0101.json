@@ -1,0 +1,140 @@
+{
+	"name": "ground rolling",
+	"icon": 1,
+	"wall": 62,
+
+	"story": [
+		{
+			"command": "createMap",
+			"mapId": 1,
+			"mapchip": [[
+				[ 2,  2,  2,  2,  2,  4,  4,  4],
+				[ 2,  2,  2,  2,  2,  4,  4,  4],
+				[ 2,  2,  2,  2,  2,  2,  4,  4],
+				[ 2,  2,  2,  2,  2,  2,  2,  2],
+				[ 2,  2,  2,  2,  2,  2,  2,  2],
+				[ 2,  2,  2,  2,  2,  2,  2,  2],
+				[ 2,  2,  2,  2,  2,  2,  4,  4],
+				[ 2,  2,  2,  2,  4,  4,  4,  4],
+			],[
+				[ 0,  0,  0,  0,  0,  0,  0,  0],
+				[ 9,  9,  0,  0,  0,  0, 13,  0],
+				[ 9,  9,  0,  0,  0,  0,  0,  0],
+				[ 9,  9,  0,  0,  0,  0,  0,  0],
+				[ 9,  0,  0,  0,  0,  0,  0,  0],
+				[ 9,  0,  0,  0,  0,  0,  0,  0],
+				[ 9,  0,  0,  0,  0,  0,  0,  0],
+				[ 0,  0,  0,  0,  0,  0,  0,  0],
+			],[
+				[ 0,  0,  0,  0,  0,  0, 14,  0],
+				[ 9,  0,  0,  0,  0, 14, 13, 14],
+				[ 9,  9,  0,  0,  0,  0, 14,  0],
+				[ 9,  9,  0,  0,  0,  0,  0,  0],
+				[ 9,  0,  0,  0,  0,  0,  0,  0],
+				[ 9,  0,  0,  0,  0,  0,  0,  0],
+				[ 0,  0,  0,  0,  0,  0,  0,  0],
+				[ 0,  0,  0,  0,  0,  0,  0,  0],
+			],[
+				[ 0,  0,  0,  0,  0,  0, 14,  0],
+				[ 9,  0,  0,  0,  0, 14, 13, 14],
+				[ 9,  9,  0,  0,  0,  0, 14,  0],
+				[ 9,  0,  0,  0,  0,  0,  0,  0],
+				[ 9,  0,  0,  0,  0,  0,  0,  0],
+				[ 9,  0,  0,  0,  0,  0,  0,  0],
+				[ 0,  0,  0,  0,  0,  0,  0,  0],
+				[ 0,  0,  0,  0,  0,  0,  0,  0],
+			],[
+				[ 0,  0,  0,  0,  0,  0,  0,  0],
+				[ 0,  0,  0,  0,  0,  0, 14,  0],
+				[ 9,  0,  0,  0,  0,  0,  0,  0],
+				[ 9,  0,  0,  0,  0,  0,  0,  0],
+				[ 9,  0,  0,  0,  0,  0,  0,  0],
+				[ 0,  0,  0,  0,  0,  0,  0,  0],
+				[ 0,  0,  0,  0,  0,  0,  0,  0],
+				[ 0,  0,  0,  0,  0,  0,  0,  0],
+			]],
+		},
+		{"command": "createChara", "charaId": 1, "kind": "default"},
+		{"command": "setCharaStatus", "charaId": 1, "x": 6.5, "y": 4.5, "z": 1},
+		{"command": "createItem", "itemId": 1, "type": "star", "x": 0.5, "y": 4.5, "z": 5.5},
+		{"command": "setCamera", "charaId": 1},
+
+		{"command": "wait", "time": 1},
+
+		{"command": "actCharaWalk", "charaId": 1, "x": 3.5, "speed": 1},
+
+		{"command": "wait", "time": 0.5},
+
+		{"command": "skipBreak"},
+
+		{"command": "setCharaEmotion", "charaId": 1, "emotion": "exclamation"},
+
+		{"command": "wait", "time": 3},
+
+		{"command": "setCharaEmotion", "charaId": 1, "emotion": "none"},
+
+		{"command": "wait", "time": 0.5},
+
+		{"command": "actCharaWalk", "charaId": 1, "x": 1.5, "speed": 2},
+
+		{"command": "wait", "time": 0.5},
+
+		{"command": "setCharaPose", "charaId": 1, "pose": "squat"},
+
+		{"command": "skipBreak"},
+
+		{"command": "wait", "time": 0.5},
+
+		{"command": "actCharaJump", "charaId": 1, "height": 1.0},
+		{"command": "actCharaJump", "charaId": 1, "height": 1.0},
+
+		{"command": "wait", "time": 1},
+
+		{"command": "actCharaWalk", "charaId": 1, "x": 2.6, "speed": 2},
+		{"command": "actCharaWalk", "charaId": 1, "x": 2.5, "speed": 2},
+
+		{"command": "wait", "time": 0.5},
+
+		{"command": "setGravity", "time": 1, "rotg": 45},
+		{"command": "setCharaStatus", "charaId": 1, "time": 1, "rotg": -45},
+
+		{"command": "wait"},
+		{"command": "skipBreak"},
+
+		{"command": "wait", "time": 0.5},
+
+		{"command": "actCharaJump", "charaId": 1, "x": 1, "z": 2.5, "height": 1.0},
+
+		{"command": "wait", "time": 0.5},
+
+		{"command": "setGravity", "time": 1, "rotg": 90},
+		{"command": "setCharaStatus", "charaId": 1, "time": 1, "rotg": -90},
+
+		{"command": "wait"},
+		{"command": "skipBreak"},
+
+		{"command": "wait", "time": 0.5},
+
+		{"command": "actCharaWalk", "charaId": 1, "z": 4.5, "speed": 2},
+
+		{"command": "wait", "time": 0.5},
+
+		{"command": "skipBreak"},
+
+		{"command": "setCharaPose", "charaId": 1, "pose": "squat"},
+		{"command": "removeItem", "itemId": 1},
+
+		{"command": "wait", "time": 0.5},
+
+		{"command": "setCharaPose", "charaId": 1, "pose": "none"},
+
+		{"command": "wait", "time": 1},
+
+		{"command": "setCharaEmotion", "charaId": 1, "emotion": "happy"},
+		{"command": "setCharaPose", "charaId": 1, "pose": "happy"},
+
+		{"command": "wait", "time": 1},
+
+		{"command": "skipBreak"},
+	]
+}
