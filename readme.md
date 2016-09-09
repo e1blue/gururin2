@@ -1,10 +1,13 @@
 グルリンダッシュ
 ======================
 
-## グルリンダッシュ
+## グルリンダッシュってなんぞや？
 
 前作[グルリン](http://totetero.com/project/gururin/frame.html)がアイデアだけの一発ネタだったのに対して、
 次元を落としてゲーム性を大幅パワーアップ！
+
+[グルリンダッシュ](http://gururin-dash.appspot.com)
+[フハハエンジン](https://github.com/totetero/fuhaha_engine)
 
 ## ファイル構造
 
