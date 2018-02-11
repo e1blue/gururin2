@@ -8,6 +8,7 @@
 
 src_client/platform_web/obj/game.js
 src_client/platform_web/obj/game.js.mem
+src_client/platform_web/obj/game.wasm
 src_client/platform_web/obj/MakeDepends.mk
 src_client/platform_web/obj/*.o
 src_client/platform_web/bin
@@ -15,8 +16,30 @@ src_client/platform_web/bin
 src_client/platform_android/.gradle
 src_client/platform_android/build
 src_client/platform_android/assets
+src_client/platform_android/*.keystore
 
 src_client/platform_ios/assets
+
+src_data/bin/*.out
+
+src_server/go/statics/play
+
+src_client/platform_web/bin11
+src_client/platform_web/bin12
+src_client/platform_web/bin21
+src_client/platform_web/bin22
+src_client/platform_web/bin31
+src_client/platform_web/bin32
+src_client/platform_web/bin41
+src_client/platform_web/bin42
+src_server/go/statics/play11
+src_server/go/statics/play12
+src_server/go/statics/play21
+src_server/go/statics/play22
+src_server/go/statics/play31
+src_server/go/statics/play32
+src_server/go/statics/play41
+src_server/go/statics/play42
 
 # ----------------------------------------------------------------
 # ----------------------------------------------------------------

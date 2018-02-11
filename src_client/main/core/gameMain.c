@@ -1,18 +1,4 @@
-#include "fuhahaEngine.h"
-
-// ----------------------------------------------------------------
-// ----------------------------------------------------------------
-// ----------------------------------------------------------------
-
-// 各ページカートリッジ装填のコンストラクタ
-void pageTest1PushPage(void);
-void pageTest2PushPage(void);
-void pageTest3PushPage(void);
-
-// 最初のページカートリッジ作成
-void createFirstCartridge(void){
-	pageTest3PushPage();
-}
+#include "includeAll.h"
 
 // ----------------------------------------------------------------
 // ----------------------------------------------------------------
@@ -21,26 +7,27 @@ void createFirstCartridge(void){
 // opengl初期化
 void gameMainSurfaceCreated(void){
 	engineGraphicGameInit();
-	engineCartridgePageManagerInit(createFirstCartridge);
+	e3dUtilGameInit();
+	utilGameInit();
+	soundGameInit();
+	pageCartridgeGameInit();
 }
 
 // opengl描画
 void gameMainSurfaceDrawFrame(void){
-	// 計算
 	engineCtrlTouchCalc();
-	engineCartridgePageManagerCalc();
-	// 描画
-	engineCartridgePageManagerDraw();
+	pageCartridgeGameCalc();
 }
 
 // opengl中断
 void gameMainSurfacePause(void){
-	engineCartridgePageManagerPause();
+	pageCartridgeGamePause();
 }
 
 // opengl終了
 void gameMainSurfaceDestroy(void){
-	engineCartridgePageManagerDispose();
+	pageCartridgeGameFinal();
+	e3dUtilGameFinal();
 	engineGraphicGameExit();
 }
 
@@ -49,10 +36,10 @@ void gameMainSurfaceDestroy(void){
 // ----------------------------------------------------------------
 
 // 戻るボタンの制御を行うか
-bool gameMainEventKeyIsBack(void){return false;}
+bool gameMainEventKeyIsBack(void){return !platformReplayExist();}
 
 // 傾きを使うかどうか
-bool gameMainEventIsAcceleration(void){return false;}
+bool gameMainEventIsAcceleration(void){return true;}
 
 // ----------------------------------------------------------------
 // ----------------------------------------------------------------

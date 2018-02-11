@@ -1,8 +1,8 @@
 #!/bin/bash
 
 FILES=""
-FILES=${FILES}" src_client/core/plugin/pluginSecretCoded.h"
-FILES=${FILES}" src_platform/android/gradle.properties"
+FILES=${FILES}" src_client/main/core/plugin/pluginSecretCoded.h"
+FILES=${FILES}" src_client/platform_android/gradle.properties"
 FILES=${FILES}" src_data/secret/createSecret.h"
 
 # --------------------------------

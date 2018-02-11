@@ -1,8 +1,8 @@
 #!/bin/bash
 
 IDENTIFIER=com.totetero.gururin2
-VERSIONCODE=10
-VERSIONNAME=1.4.0
+VERSIONCODE=11
+VERSIONNAME=1.5.0
 
 # --------------------------------
 

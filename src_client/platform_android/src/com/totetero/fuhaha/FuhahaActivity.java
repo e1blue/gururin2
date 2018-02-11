@@ -8,6 +8,10 @@ import android.widget.LinearLayout;
 import android.widget.FrameLayout;
 import android.view.Window;
 
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdSize;
+import com.google.android.gms.ads.AdView;
+
 // ----------------------------------------------------------------
 // ----------------------------------------------------------------
 // ----------------------------------------------------------------
@@ -15,6 +19,7 @@ import android.view.Window;
 // アクティビティ プログラムはここから
 public class FuhahaActivity extends Activity{
 	private static final int FRAGMENT_FUHAHA_ID = 0x00000001;
+	private AdView adView;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState){
@@ -37,20 +42,33 @@ public class FuhahaActivity extends Activity{
 		FragmentTransaction transaction = fragmentManager.beginTransaction();
 		transaction.add(frame.getId(), new FuhahaGLFragment());
 		transaction.commit();
+
+		// 広告
+		this.adView = new AdView(this);
+		this.adView.setAdUnitId(AndroidPluginSecret.gamePluginSecretGet("goodfox", 10010001));
+		this.adView.setAdSize(AdSize.BANNER);
+		AdRequest adRequest = new AdRequest.Builder()
+			.addTestDevice(AndroidPluginSecret.gamePluginSecretGet("goodfox", 10020001))
+			.build();
+		this.adView.loadAd(adRequest);
+		layout.addView(this.adView);
 	}
 
 	@Override
 	protected void onPause(){
+		this.adView.pause();
 		super.onPause();
 	}
 
 	@Override
 	protected void onResume(){
+		this.adView.resume();
 		super.onResume();
 	}
 
 	@Override
 	protected void onDestroy(){
+		this.adView.destroy();
 		super.onDestroy();
 	}
 

@@ -12,113 +12,113 @@
 ## ファイル構造
 
 | ファイル/ディレクトリ名 | 概要 |
-|------------------------|-------------|
-| contents                   | 画像や音楽などのリソースを入れておくディレクトリ |
-| src_client                 | ゲーム固有のソースコード |
-| src_client/core            | ゲーム本体のソースコード |
-| src_client/core/gameMain.c | エンジンライフサイクルのソースコード ゲームエンジンはここから始まる |
-| src_client/core/engine     | ゲームでよく使う処理をまとめたソースコード |
-| src_client/core/plugin     | 各プラットフォームと連携するためのソースコード |
-| src_client/platform_*      | 各プラットフォーム固有のソースコード |
-| src_platform               | 各プラットフォーム固有のソースコード 上記との違いは、プラットフォームのバージョンアップなどにより変化してしまう可能性が高いソースコード |
-| src_data                   | 画像などのリソースを作成するデータ |
-| src_server                 | web版動作確認用 |
+|---------------------------------|---|
+| contents                        | 画像や音楽などのリソースを入れておくディレクトリ |
+| src_client/fuhahaEngine         | ゲームエンジンのソースコード |
+| src_client/main                 | ゲーム本体のソースコード |
+| src_client/main/core/gameMain.c | ゲームはここから始まる |
+| src_client/platform_android     | android用プロジェクト |
+| src_client/platform_ios         | ios用プロジェクト |
+| src_client/platform_web         | web用プロジェクト |
+| src_data                        | 加工前のリソース |
+| src_server                      | web版動作確認用 |
 
 
 ## ビルド準備
 
-本ゲームはmac上での開発を想定しております。
+本エンジンはdockerを用いた開発を想定しております。
 
-### リソースビルド
+### android/web版の開発
 
-* imageMagickのインストール
+* dockerのインストール
 
-### android版の開発
+#### docker開発環境の準備と開始
 
-* android SDK/NDKのインストール
+dockerはシェルスクリプトにより管理されます。
+下記のシェルスクリプトコマンドを実行して開発環境を準備します。
+時間がかかります。
+
+```bash
+cd ${FUHAHAROOT}
+sh docker_builder.sh first
+```
+
+下記のシェルスクリプトコマンドを実行すれば準備した開発環境を立ち上げることができます。
+
+```bash
+cd ${FUHAHAROOT}
+sh docker_builder.sh start
+```
+
+#### docker開発環境の停止と削除
+
+下記のシェルスクリプトコマンドを実行すれば立ち上げた開発環境を止めることができます。
+
+```bash
+cd ${FUHAHAROOT}
+sh docker_builder.sh stop
+```
+
+下記のシェルスクリプトコマンドを実行すれば開発環境を取り除いて綺麗な状態にすることができます。
+
+```bash
+cd ${FUHAHAROOT}
+sh docker_builder.sh last
+```
 
 ### ios版の開発
 
 * XCodeのインストール
-* CocoaPodsのインストール
-
-### web版の開発
-
-* emscriptenのインストール
-* node.jsのインストール
-* (GoogleAppEngineのインストール)
 
 ## リソース管理
 
-下記のmakeコマンドを実行します。
-
-```bash
-cd ${FUHAHAROOT}
-make img
-```
-
-`${FUHAHAROOT}/contents`に画像などのリソースが作成されます。
-
-下記のmakeコマンドを実行します。
-
-```bash
-cd ${FUHAHAROOT}
-make copy
-```
-
-すると必要な場所にリソースがコピーされます。
+`${FUHAHAROOT}/contents`に画像などのリソースを入れます。
 
 ## デバッグビルド
 
-### android版のビルド
+### web版のビルド
 
-下記のmakeコマンドを実行します。
+docker開発環境を立ち上げ、下記のシェルスクリプトコマンドを実行します。
 
 ```bash
 cd ${FUHAHAROOT}
-make android-debug
+sh docker_builder.sh make web
 ```
 
-ビルドが成功すれば`${FUHAHAROOT}/src_platform/android/build/outputs/apk/android-all-release.apk`が生成されます。
+ビルドが成功すれば`${FUHAHAROOT}/src_client/platform_web/bin`以下に必要なファイルがまとまります。
+同時にdocker上で`node.js`が立ち上がり http://127.0.0.1:8080/game.html でアクセスできます。
+
+### android版のビルド
+
+docker開発環境を立ち上げ、下記のシェルスクリプトコマンドを実行します。
+
+```bash
+cd ${FUHAHAROOT}
+sh docker_builder.sh make copy-and and-debug
+```
+
+ビルドが成功すれば`${FUHAHAROOT}/src_client/platform_android/build/outputs/apk/android-all-debug.apk`が生成されます。
 adbなどを用いてandroid実機にインストールして確認してください。
 
 ### ios版のビルド
 
-最初の場合は下記のコマンドを実行します
+下記のmakeコマンドを実行し、必要なリソースをコピーします。
 
 ```bash
-cd ${FUHAHAROOT}/src_platform/ios
-pod install
+cd ${FUHAHAROOT}
+make copy-ios
 ```
 
-うまくいけば必要なライブラリがインストールされます。
+XCodeで`${FUHAHAROOT}/src_client/platform_ios/fuhaha.xcodeproj`を開きます。
 
-XCodeで`${FUHAHAROOT}/src_platform/ios/fuhaha.xcodeproj`を開きます。
-XCodeの作法に従いビルドします。
-
+* XCodeの作法に従いビルドします。
 * プロジェクトにソースコードを追加した場合は以下の手順に従います。
-    * XCodeで`core`を削除し`${FUHAHAROOT}/src_client/core`を追加します。
-    * XCodeで`platform_ios `を削除し`${FUHAHAROOT}/src_client/platform_ios `を追加します。
+    * XCodeで`core`と`ios`が2個づつあるので削除します。
+    * `${FUHAHAROOT}/src_client/fuhahaEngine/core`を追加します。
+    * `${FUHAHAROOT}/src_client/fuhahaEngine/ios `を追加します。
+    * `${FUHAHAROOT}/src_client/main/core`を追加します。
+    * `${FUHAHAROOT}/src_client/main/ios `を追加します。
     * 削除する際は`Remove References`で、追加する際は`Create groups`を選択します。
-
-### web版のビルド
-
-下記のmakeコマンドを実行します。
-
-```bash
-cd ${FUHAHAROOT}
-make web-debug
-```
-
-ビルドが成功すれば`${FUHAHAROOT}/src_platform/web/bin`以下に必要なファイルがまとまります。
-動作確認をするには、下記のmakeコマンドを実行します。
-
-```bash
-cd ${FUHAHAROOT}
-make web-node
-```
-
-すると`node.js`が立ち上がり http://127.0.0.1:8080/game.html でアクセスできます。
 
 ## ライセンス
 

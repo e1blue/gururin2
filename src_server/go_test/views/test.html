@@ -1,0 +1,20 @@
+{{define "content"}}
+<h2>Users List</h2>
+
+<table class="table">
+  <thead>
+    <tr>
+      <td>Key<td>
+      <td>Name<td>
+      <td>Role<td>
+    </tr>
+  </thead>
+{{range $index, $group := .Users}}
+  <tr>
+    <td>{{$index}}<td>
+    <td>{{$group.Name}}<td>
+    <td>{{$group.Role}}<td>
+  </tr>
+{{end}}
+</table>
+{{end}}

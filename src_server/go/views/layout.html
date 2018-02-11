@@ -55,8 +55,8 @@
 	</div>
 {{end}}
 
-{{define "downloadWeb"}}
-	<div class="caption"><span id="i18n_spanId_getWeb_caption"></span></div>
+{{define "downloadTrialWeb"}}
+	<div class="caption"><span id="i18n_spanId_getWeb_caption1"></span></div>
 
 	<div style="text-align:center;padding:10px 0px;">
 		<div class="i18n_ja"><a href="/play"><img src="/img/banner_trial.png" style="width:120px; height:45px;"></a></div>
@@ -66,8 +66,39 @@
 	</div>
 {{end}}
 
+{{define "downloadFullWeb"}}
+	<div class="caption"><span id="i18n_spanId_getWeb_caption2"></span></div>
+
+	<div style="text-align:center;padding:10px 0px;">
+		<div><span id="i18n_spanId_getWeb_caption3"></span></div>
+		<div class="i18n_ja"><a href="/play"><img src="/img/banner_web.png" style="width:120px; height:45px;"></a></div>
+		<div class="i18n_en"><a href="/play"><img src="/img/banner_web.png" style="width:120px; height:45px;"></a></div>
+		<table align="center">
+			<tr><td><b>compile option</b></td><td><b>.js size</b></td><td><b>.wasm size</b></td><td><b>game link</b></td></tr>
+			<tr><td>emcc</td><td align="right">2117354</td><td align="right"></td><td align="center"><a href="./play11/game.html">play</a></td></tr>
+			<tr><td>emcc -s WASM=1</td><td align="right">258114</td><td align="right">452756</td><td align="center"><a href="./play12/game.html">play</a></td></tr>
+			<tr><td>emcc -O3</td><td align="right">487930</td><td align="right"></td><td align="center"><a href="./play21/game.html">play</a></td></tr>
+			<tr><td>emcc -O3 -s WASM=1</td><td align="right">136099</td><td align="right">240600</td><td align="center"><a href="./play22/game.html">play</a></td></tr>
+			<tr><td>emcc -Os</td><td align="right">445771</td><td align="right"></td><td align="center"><a href="./play31/game.html">play</a></td></tr>
+			<tr><td>emcc -Os -s WASM=1</td><td align="right">136099</td><td align="right">203777</td><td align="center"><a href="./play32/game.html">play</a></td></tr>
+			<tr><td>emcc -Oz</td><td align="right">442939</td><td align="right"></td><td align="center"><a href="./play41/game.html">play</a></td></tr>
+			<tr><td>emcc -Oz -s WASM=1</td><td align="right">136099</td><td align="right">201701</td><td align="center"><a href="./play42/game.html">play</a></td></tr>
+		</table>
+		<div><span id="i18n_spanId_getWeb_asterisk_reset1"></span><button type="button" id="buttonReset"><span id="i18n_spanId_getWeb_asterisk_reset2"></span></button></div>
+		<div><span id="i18n_spanId_getWeb_asterisk_webgl"></span></div>
+		<script type="text/javascript">
+			document.getElementById("buttonReset").addEventListener("click", function(){
+				if(window.confirm("Do you want to reset the data?")){
+					window.localStorage.clear();
+					window.alert("The data was reset.");
+				}
+			});
+		</script>
+	</div>
+{{end}}
+
 {{define "credit"}}
-	<div class="caption"><span id="i18n_spanId_credit_caption"></span></span></div>
+	<div class="caption"><span id="i18n_spanId_credit_caption"></span></div>
 
 	<table style="margin:10px auto;">
 		<tr><td style="text-align:right;"><span id="i18n_spanId_credit_game"></span>:</td><td style="text-align:left;">ぽろゆき<a href="https://twitter.com/totetero">@totetero</a></td></tr>
@@ -77,12 +108,12 @@
 {{end}}
 
 {{define "backLink"}}
-	<div class="caption"><span style="color:transparent;">.</span></span></div>
+	<div class="caption"><span style="color:transparent;">.</span></div>
 
 	<div style="text-align:center;padding:10px 0px;"><a href="/"><span id="i18n_spanId_backLink_top"></span></a></div>
 {{end}}
 
 {{define "footer"}}
-	<div class="caption">2016 <a href="http://totetero.com">totetero.com</a></div>
+	<div class="caption">2016-2018 <a href="http://totetero.com">totetero.com</a></div>
 {{end}}
 
